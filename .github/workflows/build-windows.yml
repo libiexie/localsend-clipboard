@@ -6,9 +6,6 @@ on:
       - "v*"
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: windows-latest
@@ -61,10 +58,3 @@ jobs:
         with:
           name: LocalSendClipboard-windows-x64
           path: dist/LocalSendClipboard.exe
-
-      - name: Create release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/LocalSendClipboard.exe
-          generate_release_notes: true
