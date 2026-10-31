@@ -482,6 +482,13 @@ class Receiver:
 
     # ------------------------------------------------------------- server lifecycle
     def start(self) -> None:
+        # 清理历史 stop 标记：CLI `stop` 会写 stop.flag，若残留会导致本次启动立即自停
+        try:
+            if os.path.exists(self.stop_flag):
+                os.remove(self.stop_flag)
+        except OSError:
+            pass
+        self._stop_event.clear()
         self.log(f"receiver start pid={os.getpid()} port={self.port} alias={self.alias} fp={self.fingerprint}")
         reconfigure_stdout()
         ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
