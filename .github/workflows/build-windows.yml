@@ -42,17 +42,18 @@ jobs:
       - name: Build standalone exe
         shell: pwsh
         run: |
+          $root = Get-Location
           python -m PyInstaller --noconfirm --clean --onefile --noconsole `
             --name LocalSendClipboard `
-            --icon "build\app.ico" `
-            --version-file "packaging\version_info.txt" `
+            --icon (Join-Path $root "build\app.ico") `
+            --version-file (Join-Path $root "packaging\version_info.txt") `
             --collect-all pillow_heif `
             --collect-all pystray `
             --collect-submodules cryptography `
             --hidden-import PIL `
-            --distpath "dist" `
-            --workpath "build\pyinstaller" `
-            --specpath "build" `
+            --distpath (Join-Path $root "dist") `
+            --workpath (Join-Path $root "build\pyinstaller") `
+            --specpath (Join-Path $root "build") `
             "app.py"
 
       - name: Upload artifact
