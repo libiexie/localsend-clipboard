@@ -27,6 +27,8 @@ jobs:
           New-Item -ItemType Directory -Force -Path build | Out-Null
           @'
           import os
+          import sys
+          sys.path.insert(0, os.getcwd())
           from app import make_icon
           from PIL import Image
           base = make_icon().resize((256, 256), Image.LANCZOS)
