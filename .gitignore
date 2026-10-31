@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# Build artifacts
+build/
+dist/
+*.spec
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Runtime / test data
+*.log
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*_test/
+receiver_test/
+app_test/
+state/
+_private/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Local executables
+*.exe
+*.zip
+!packaging/version_info.txt

@@ -1,0 +1,70 @@
+name: build-windows
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Generate icon
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+          @'
+          import os
+          from app import make_icon
+          from PIL import Image
+          base = make_icon().resize((256, 256), Image.LANCZOS)
+          im = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
+          im.alpha_composite(base)
+          im.save(os.path.join("build", "app.ico"),
+                  sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
+          '@ | Out-File -Encoding utf8 build\_mk_icon.py
+          python build\_mk_icon.py
+
+      - name: Build standalone exe
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --onefile --noconsole `
+            --name LocalSendClipboard `
+            --icon "build\app.ico" `
+            --version-file "packaging\version_info.txt" `
+            --collect-all pillow_heif `
+            --collect-all pystray `
+            --collect-submodules cryptography `
+            --hidden-import PIL `
+            --distpath "dist" `
+            --workpath "build\pyinstaller" `
+            --specpath "build" `
+            "app.py"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LocalSendClipboard-windows-x64
+          path: dist/LocalSendClipboard.exe
+
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/LocalSendClipboard.exe
+          generate_release_notes: true

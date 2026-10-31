@@ -1,0 +1,5 @@
+# Runtime dependencies
+Pillow>=10.0.0
+pillow-heif>=0.16.0
+cryptography>=42.0.0
+pystray>=0.19.5
