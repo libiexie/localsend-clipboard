@@ -42,16 +42,16 @@ if ($LASTEXITCODE -ne 0) { throw "icon generation failed" }
 Write-Host "== 3) PyInstaller build =="
 & $Python -m PyInstaller --noconfirm --clean --onefile --noconsole `
     --name LocalSendClipboard `
-    --icon "build\app.ico" `
-    --version-file "packaging\version_info.txt" `
+    --icon (Join-Path $Root "build\app.ico") `
+    --version-file (Join-Path $Root "packaging\version_info.txt") `
     --collect-all pillow_heif `
     --collect-all pystray `
     --collect-submodules cryptography `
     --hidden-import PIL `
-    --distpath "dist" `
-    --workpath "build\pyinstaller" `
-    --specpath "build" `
-    "app.py"
+    --distpath (Join-Path $Root "dist") `
+    --workpath (Join-Path $Root "build\pyinstaller") `
+    --specpath (Join-Path $Root "build") `
+    (Join-Path $Root "app.py")
 if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed" }
 
 Write-Host "== Done =="
